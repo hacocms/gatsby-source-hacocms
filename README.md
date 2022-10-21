@@ -20,7 +20,7 @@ yarn add gatsby-source-hacocms
 
 新規または既存の Gatsby プロジェクトを準備してください。
 プロジェクトに `gatsby-source-hacocms` プラグインをインストールしてください。
-`gatsby-config.js` の `plugins` に次のようなオプションを追加してください。
+`gatsby-config.js` の `plugins` に次のような[オプション](#オプション)を追加してください。
 
 ```js
 {
@@ -37,8 +37,12 @@ yarn add gatsby-source-hacocms
 },
 ```
 
-ここでは、プロジェクトのサブドメイン `subdomain` とアクセストークン `accessToken` を環境変数 `HACOCMS_API_SUBDOMAIN`, `HACOCMS_API_ACCESS_TOKEN` で設定し、
+この例では、プロジェクトのサブドメイン `subdomain` とアクセストークン `accessToken` を環境変数 `HACOCMS_API_SUBDOMAIN`, `HACOCMS_API_ACCESS_TOKEN` で設定し、
 Gatsby のデータレイヤに取り込む API のエンドポイント `/entries` を `apis` に指定しています。
+
+## 注意
+
+- hacoCMS のコンテンツ ID は `id` ではなく `hacocmsId` フィールドになります。これは、GraphQL スキーマにおいて `id` フィールドがデータノードの ID として使用されるためです。
 
 ## オプション
 
