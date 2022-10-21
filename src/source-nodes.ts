@@ -58,7 +58,7 @@ export const sourceApiNodes = async (
       total = meta.total
     }
     offset += contents.length
-  } while (total! > offset)
+  } while (total && total > offset)
 }
 
 export const sourceNodes = async (
