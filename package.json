@@ -1,0 +1,56 @@
+{
+  "name": "gatsby-source-hacocms",
+  "version": "0.1.0",
+  "description": "Gatsby source plugin to use hacoCMS",
+  "main": "gatsby-node.js",
+  "scripts": {
+    "test": "NODE_OPTIONS='--experimental-vm-modules --no-warnings' jest",
+    "clean": "rimraf dist",
+    "build": "tsc",
+    "lint": "npm run lint:prettier && npm run lint:eslint",
+    "lint:prettier": "prettier --check .",
+    "lint:eslint": "eslint --ext .js,.ts .",
+    "format": "npm run format:prettier && npm run format:eslint",
+    "format:prettier": "prettier --write .",
+    "format:eslint": "eslint --fix --ext .js,.ts .",
+    "prepublishOnly": "npm run clean && npm run build"
+  },
+  "keywords": [
+    "gatsby",
+    "gatsby-plugin",
+    "hacoCMS"
+  ],
+  "author": "Seesaa Inc.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hacocms/gatsby-source-hacocms"
+  },
+  "bugs": {
+    "url": "https://github.com/hacocms/gatsby-source-hacocms/issues"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.2.0",
+    "@types/node": "^16.11.68",
+    "@typescript-eslint/eslint-plugin": "^5.40.1",
+    "@typescript-eslint/parser": "^5.40.1",
+    "eslint": "^6.8.0",
+    "eslint-config-prettier": "^6.15.0",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-prettier": "^3.4.1",
+    "gatsby": "^4.24.4",
+    "gatsby-core-utils": "^3.24.0",
+    "gatsby-plugin-utils": "^3.18.0",
+    "jest": "^29.2.1",
+    "prettier": "2.7.1",
+    "rimraf": "^3.0.2",
+    "ts-jest": "^29.0.3",
+    "typescript": "^4.8.4"
+  },
+  "dependencies": {
+    "hacocms-js-sdk": "^1.1.0"
+  },
+  "files": [
+    "dist"
+  ]
+}

@@ -1,0 +1,94 @@
+name: build, test, lint
+
+on:
+  - push
+
+jobs:
+  setup:
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        node: [14, 16, 18]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node }}
+      - uses: actions/checkout@v3
+      - uses: actions/cache@v3
+        with:
+          path: |
+            node_modules
+          key: ${{ matrix.os }}-node-v${{ matrix.node }}-deps-${{ hashFiles(format('{0}{1}', github.workspace, '/package-lock.json')) }}
+      - run: npm ci
+      - uses: actions/cache@v3
+        with:
+          path: |
+            node_modules
+            dist
+          key: ${{ matrix.os }}-node-v${{ matrix.node }}-${{ github.sha }}
+
+  build:
+    needs: setup
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        node: [14, 16, 18]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node }}
+      - uses: actions/checkout@v3
+      - uses: actions/cache@v3
+        with:
+          path: |
+            node_modules
+            dist
+          key: ${{ matrix.os }}-node-v${{ matrix.node }}-${{ github.sha }}
+      - run: npm run build
+
+  test:
+    needs: setup
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        node: [14, 16]
+        experimental: [false]
+        include:
+          - os: ubuntu-latest
+            node: 18
+            experimental: true
+    continue-on-error: ${{ matrix.experimental }}
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node }}
+      - uses: actions/checkout@v3
+      - uses: actions/cache@v3
+        with:
+          path: |
+            node_modules
+            dist
+          key: ${{ matrix.os }}-node-v${{ matrix.node }}-${{ github.sha }}
+      - run: npm test
+
+  lint:
+    needs: setup
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        node: [16]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node }}
+      - uses: actions/checkout@v3
+      - uses: actions/cache@v3
+        with:
+          path: |
+            node_modules
+          key: ${{ matrix.os }}-node-v${{ matrix.node }}-deps-${{ hashFiles(format('{0}{1}', github.workspace, '/package-lock.json')) }}
+      - run: npm run lint
