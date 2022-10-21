@@ -1,5 +1,9 @@
 # gatsby-source-hacocms
 
+[![build, test, lint](https://github.com/hacocms/gatsby-source-hacocms/actions/workflows/test.yml/badge.svg)](https://github.com/hacocms/gatsby-source-hacocms/actions/workflows/test.yml)
+[![npm version](https://badge.fury.io/js/gatsby-source-hacocms.svg)](https://badge.fury.io/js/gatsby-source-hacocms)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 [hacoCMS](https://hacocms.com/) の API を Gatsby で使用するためのソースプラグインです。
 
 ## インストール
