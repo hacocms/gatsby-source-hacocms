@@ -1,6 +1,6 @@
-import { graphql, Link } from 'gatsby'
-import PropTypes from 'prop-types'
-import React from 'react'
+import { graphql, Link } from "gatsby"
+import PropTypes from "prop-types"
+import React from "react"
 
 export const query = graphql`
   query EntryQuery($id: String) {
