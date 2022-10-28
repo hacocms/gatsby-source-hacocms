@@ -1,4 +1,5 @@
 import type { SourceNodesArgs } from "gatsby"
+import { ApiContent, HacoCmsClient, JsonType } from "hacocms-js-sdk"
 import type { ValidPluginOptions } from "./plugin-options-schema"
 
 type ArrayElement<ArrayType extends readonly unknown[]> =
@@ -11,16 +12,13 @@ type RequiredSourceNodesArgs = Pick<
 
 export const sourceApiNodes = async (
   { actions, createContentDigest, createNodeId }: RequiredSourceNodesArgs,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  client: any,
+  client: HacoCmsClient,
   api: ArrayElement<NonNullable<ValidPluginOptions["apis"]>>
 ) => {
   const { createNode } = actions
 
-  const { ApiContent } = await import(`hacocms-js-sdk`)
   class AnyContent extends ApiContent {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    constructor(json: any) {
+    constructor(json: JsonType<AnyContent>) {
       super(json)
       Object.assign(this, json)
     }
@@ -65,7 +63,6 @@ export const sourceNodes = async (
   { actions, createContentDigest, createNodeId }: RequiredSourceNodesArgs,
   pluginOptions: ValidPluginOptions
 ) => {
-  const { HacoCmsClient } = await import(`hacocms-js-sdk`)
   const client = new HacoCmsClient(
     `https://${pluginOptions.subdomain}.hacocms.com`,
     pluginOptions.accessToken

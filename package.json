@@ -4,7 +4,7 @@
   "description": "Gatsby source plugin to use hacoCMS",
   "main": "gatsby-node.js",
   "scripts": {
-    "test": "NODE_OPTIONS='--experimental-vm-modules --no-warnings' jest",
+    "test": "jest",
     "clean": "rimraf dist",
     "build": "tsc",
     "lint": "npm run lint:prettier && npm run lint:eslint",
@@ -48,7 +48,7 @@
     "typescript": "^4.8.4"
   },
   "dependencies": {
-    "hacocms-js-sdk": "^1.1.0"
+    "hacocms-js-sdk": "^1.2.0-6"
   },
   "files": [
     "dist"

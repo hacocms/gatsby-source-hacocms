@@ -1,6 +1,7 @@
 import { jest } from "@jest/globals"
 import { createContentDigest } from "gatsby-core-utils"
 import { actions as originalActions } from "gatsby/dist/redux/actions"
+import { HacoCmsClient } from "hacocms-js-sdk"
 import { sourceApiNodes } from "../source-nodes"
 
 let currentNodeMap = new Map()
@@ -25,7 +26,6 @@ const dummyAccessToken = `DUMMY_ACCESS_TOKEN`
 
 describe(`sourceApiNodes`, () => {
   it(`should generate no nodes if empty list is returned`, async () => {
-    const { HacoCmsClient } = await import(`hacocms-js-sdk`)
     jest.spyOn(HacoCmsClient.prototype, `getList`).mockImplementation(() =>
       Promise.resolve({
         data: [],
@@ -45,7 +45,6 @@ describe(`sourceApiNodes`, () => {
   })
 
   it(`should generate an node, which fields includes original ones excluding "id" renamed to "hacocmsId"`, async () => {
-    const { HacoCmsClient } = await import(`hacocms-js-sdk`)
     jest.spyOn(HacoCmsClient.prototype, `getList`).mockImplementation(Content =>
       Promise.resolve({
         data: [
@@ -85,7 +84,6 @@ describe(`sourceApiNodes`, () => {
   })
 
   it(`should generate nodes, which the number of those is same as returned`, async () => {
-    const { HacoCmsClient } = await import(`hacocms-js-sdk`)
     jest.spyOn(HacoCmsClient.prototype, `getList`).mockImplementation(Content =>
       Promise.resolve({
         data: [
@@ -130,7 +128,6 @@ describe(`sourceApiNodes`, () => {
       closedAt: null,
     }))
 
-    const { HacoCmsClient } = await import(`hacocms-js-sdk`)
     const spyGetList = jest
       .spyOn(HacoCmsClient.prototype, `getList`)
       .mockClear()
