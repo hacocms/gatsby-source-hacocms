@@ -1,7 +1,7 @@
 import type { SourceNodesArgs } from "gatsby"
 import { HacoCmsClient } from "hacocms-js-sdk"
 import type { ValidPluginOptions } from "./plugin-options-schema"
-import { sourceApiNodes } from "./source-api-nodes"
+import { sourceListApiNodes } from "./source-api-nodes"
 
 export const sourceNodes = async (
   { actions, createContentDigest, createNodeId }: SourceNodesArgs,
@@ -12,10 +12,10 @@ export const sourceNodes = async (
     pluginOptions.accessToken
   )
   for (const api of pluginOptions.apis || []) {
-    await sourceApiNodes(
+    await sourceListApiNodes(
       { actions, createContentDigest, createNodeId },
       client,
-      api
+      api.endpoint
     )
   }
 }

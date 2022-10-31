@@ -1,16 +1,10 @@
 import type { SourceNodesArgs } from "gatsby"
 import { ApiContent, HacoCmsClient, type JsonType } from "hacocms-js-sdk"
-import type { ValidPluginOptions } from "./plugin-options-schema"
-
-type ArrayElement<ArrayType extends readonly unknown[]> =
-  ArrayType extends readonly (infer ElementType)[] ? ElementType : never
 
 type RequiredSourceNodesArgs = Pick<
   SourceNodesArgs,
   "actions" | "createContentDigest" | "createNodeId"
 >
-
-type ApiOptions = ArrayElement<NonNullable<ValidPluginOptions["apis"]>>
 
 class AnyContent extends ApiContent {
   constructor(json: JsonType<AnyContent>) {
@@ -19,10 +13,10 @@ class AnyContent extends ApiContent {
   }
 }
 
-export const sourceApiNodes = async (
+export const sourceListApiNodes = async (
   { actions, createContentDigest, createNodeId }: RequiredSourceNodesArgs,
   client: HacoCmsClient,
-  api: ApiOptions
+  endpoint: string
 ) => {
   const { createNode } = actions
 
@@ -31,7 +25,7 @@ export const sourceApiNodes = async (
   do {
     const { data: contents, meta } = await client.getList(
       AnyContent,
-      `/${api.endpoint}`,
+      `/${endpoint}`,
       { offset }
     )
 
@@ -39,11 +33,11 @@ export const sourceApiNodes = async (
       createNode({
         ...content,
         hacocmsId: content.id,
-        id: createNodeId(`${api.endpoint}-${content.id}`),
+        id: createNodeId(`${endpoint}-${content.id}`),
         parent: null,
         children: [],
         internal: {
-          type: api.endpoint,
+          type: endpoint,
           contentDigest: createContentDigest(content),
         },
       })

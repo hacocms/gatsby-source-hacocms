@@ -2,7 +2,7 @@ import { jest } from "@jest/globals"
 import { createContentDigest } from "gatsby-core-utils"
 import { actions as originalActions } from "gatsby/dist/redux/actions"
 import { HacoCmsClient } from "hacocms-js-sdk"
-import { sourceApiNodes } from "../source-api-nodes"
+import { sourceListApiNodes } from "../source-api-nodes"
 
 let currentNodeMap = new Map()
 const createNode = jest.fn((node, ...args) => {
@@ -24,7 +24,7 @@ beforeEach(() => {
 const dummyBaseUrl = `https://dummy.hacocms.com/`
 const dummyAccessToken = `DUMMY_ACCESS_TOKEN`
 
-describe(`sourceApiNodes`, () => {
+describe(`sourceListApiNodes`, () => {
   it(`should generate no nodes if empty list is returned`, async () => {
     jest.spyOn(HacoCmsClient.prototype, `getList`).mockImplementation(() =>
       Promise.resolve({
@@ -35,10 +35,10 @@ describe(`sourceApiNodes`, () => {
 
     const client = new HacoCmsClient(dummyBaseUrl, dummyAccessToken)
 
-    await sourceApiNodes(
+    await sourceListApiNodes(
       { actions, createContentDigest, createNodeId },
       client,
-      { endpoint: `endpoint`, shape: `list` }
+      `endpoint`
     )
 
     expect(createNode).toBeCalledTimes(0)
@@ -62,10 +62,10 @@ describe(`sourceApiNodes`, () => {
 
     const client = new HacoCmsClient(dummyBaseUrl, dummyAccessToken)
 
-    await sourceApiNodes(
+    await sourceListApiNodes(
       { actions, createContentDigest, createNodeId },
       client,
-      { endpoint: `endpoint`, shape: `list` }
+      `endpoint`
     )
 
     expect(currentNodeMap.size).toBe(1)
@@ -108,10 +108,10 @@ describe(`sourceApiNodes`, () => {
 
     const client = new HacoCmsClient(dummyBaseUrl, dummyAccessToken)
 
-    await sourceApiNodes(
+    await sourceListApiNodes(
       { actions, createContentDigest, createNodeId },
       client,
-      { endpoint: `endpoint`, shape: `list` }
+      `endpoint`
     )
 
     expect(createNode).toBeCalledTimes(2)
@@ -146,10 +146,10 @@ describe(`sourceApiNodes`, () => {
 
     const client = new HacoCmsClient(dummyBaseUrl, dummyAccessToken)
 
-    await sourceApiNodes(
+    await sourceListApiNodes(
       { actions, createContentDigest, createNodeId },
       client,
-      { endpoint: `endpoint`, shape: `list` }
+      `endpoint`
     )
 
     expect(spyGetList.mock.calls.map(([, , query]) => query?.offset)).toEqual([
