@@ -1,7 +1,7 @@
 import type { SourceNodesArgs } from "gatsby"
 import { ApiContent, HacoCmsClient, type JsonType } from "hacocms-js-sdk"
 
-type RequiredSourceNodesArgs = Pick<
+export type RequiredSourceNodesArgs = Pick<
   SourceNodesArgs,
   "actions" | "createContentDigest" | "createNodeId"
 >
@@ -53,4 +53,26 @@ export const sourceListApiNodes = async (
     }
     offset += contents.length
   } while (total && total > offset)
+}
+
+export const sourceSingleApiNodes = async (
+  { actions, createContentDigest, createNodeId }: RequiredSourceNodesArgs,
+  client: HacoCmsClient,
+  endpoint: string
+) => {
+  const { createNode } = actions
+
+  const content = await client.getSingle(AnyContent, `/${endpoint}`)
+
+  createNode({
+    ...content,
+    hacocmsId: content.id,
+    id: createNodeId(`${endpoint}-${content.id}`),
+    parent: null,
+    children: [],
+    internal: {
+      type: endpoint,
+      contentDigest: createContentDigest(content),
+    },
+  })
 }
