@@ -2,7 +2,7 @@ import { jest } from "@jest/globals"
 import { createContentDigest } from "gatsby-core-utils"
 import { actions as originalActions } from "gatsby/dist/redux/actions"
 import { HacoCmsClient } from "hacocms-js-sdk"
-import { sourceApiNodes } from "../source-nodes"
+import { sourceApiNodes } from "../source-api-nodes"
 
 let currentNodeMap = new Map()
 const createNode = jest.fn((node, ...args) => {
