@@ -38,7 +38,7 @@ describe(`sourceApiNodes`, () => {
     await sourceApiNodes(
       { actions, createContentDigest, createNodeId },
       client,
-      { endpoint: `endpoint` }
+      { endpoint: `endpoint`, shape: `list` }
     )
 
     expect(createNode).toBeCalledTimes(0)
@@ -65,7 +65,7 @@ describe(`sourceApiNodes`, () => {
     await sourceApiNodes(
       { actions, createContentDigest, createNodeId },
       client,
-      { endpoint: `endpoint` }
+      { endpoint: `endpoint`, shape: `list` }
     )
 
     expect(currentNodeMap.size).toBe(1)
@@ -111,7 +111,7 @@ describe(`sourceApiNodes`, () => {
     await sourceApiNodes(
       { actions, createContentDigest, createNodeId },
       client,
-      { endpoint: `endpoint` }
+      { endpoint: `endpoint`, shape: `list` }
     )
 
     expect(createNode).toBeCalledTimes(2)
@@ -149,7 +149,7 @@ describe(`sourceApiNodes`, () => {
     await sourceApiNodes(
       { actions, createContentDigest, createNodeId },
       client,
-      { endpoint: `endpoint` }
+      { endpoint: `endpoint`, shape: `list` }
     )
 
     expect(spyGetList.mock.calls.map(([, , query]) => query?.offset)).toEqual([

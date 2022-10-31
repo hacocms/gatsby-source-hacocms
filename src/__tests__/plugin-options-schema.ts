@@ -76,4 +76,46 @@ describe(`pluginOptionsSchema`, () => {
     expect(isValid).toBe(true)
     expect(errors).toHaveLength(0)
   })
+
+  it(`should validate options including "apis" with an single-shape endpoint`, async () => {
+    const options = {
+      subdomain: `example-example`,
+      accessToken: `DUMMY_ACCESS_TOKEN`,
+      apis: [{ endpoint: `endpoint`, shape: `single` }],
+    }
+    const { isValid, errors } = await testPluginOptionsSchema(
+      pluginOptionsSchema,
+      options
+    )
+    expect(isValid).toBe(true)
+    expect(errors).toHaveLength(0)
+  })
+
+  it(`should validate options including "apis" with an list-shape endpoint`, async () => {
+    const options = {
+      subdomain: `example-example`,
+      accessToken: `DUMMY_ACCESS_TOKEN`,
+      apis: [{ endpoint: `endpoint`, shape: `list` }],
+    }
+    const { isValid, errors } = await testPluginOptionsSchema(
+      pluginOptionsSchema,
+      options
+    )
+    expect(isValid).toBe(true)
+    expect(errors).toHaveLength(0)
+  })
+
+  it(`should invalidate options including "apis" with an invalid-shape endpoint`, async () => {
+    const options = {
+      subdomain: `example-example`,
+      accessToken: `DUMMY_ACCESS_TOKEN`,
+      apis: [{ endpoint: `endpoint`, shape: `invalid_shape` }],
+    }
+    const { isValid, errors } = await testPluginOptionsSchema(
+      pluginOptionsSchema,
+      options
+    )
+    expect(isValid).toBe(false)
+    expect(errors).toEqual([`"apis[0].shape" must be one of [list, single]`])
+  })
 })
