@@ -1,7 +1,12 @@
 name: build, test, lint
 
 on:
-  - push
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
   setup:
