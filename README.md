@@ -50,22 +50,30 @@ Gatsby のデータレイヤに取り込む API のエンドポイント `/entri
 
 プロジェクトのサブドメイン
 
-型： `String`
+型：`String`
 
 ### `accessToken`（必須）
 
 プロジェクトの Access-Token
 
-型： `String`
+型：`String`
 
 ### `apis`（必須）
 
 取り込む API のリスト
 
-型： `Array`
+型：`Array`
 
 #### `apis[].endpoint`（必須）
 
 API のエンドポイント
 
-型： `String`
+型：`String`
+
+#### `apis[].shape`
+
+API の形式（リスト形式 `list` またはシングル形式 `single` ）
+
+型：`String`
+
+既定値：`list`
