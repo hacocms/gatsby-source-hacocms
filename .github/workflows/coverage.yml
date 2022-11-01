@@ -23,4 +23,6 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
       - name: output report to summary
         run: |
-          echo "${{ steps.coverage-report.outputs.report }}" >>$GITHUB_STEP_SUMMARY
+          cat <<EOS >>$GITHUB_STEP_SUMMARY
+          ${{ steps.coverage-report.outputs.report }}
+          EOS
