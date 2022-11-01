@@ -5,22 +5,14 @@ on:
       - main
 jobs:
   coverage:
+    if: github.event.pull_request.head.repo.fork == false
     permissions:
       checks: write
-      issues: write
       pull-requests: write
       contents: write
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - id: coverage-report
-        uses: ArtiomTr/jest-coverage-report-action@v2
+      - uses: ArtiomTr/jest-coverage-report-action@v2
         with:
           test-script: npm test
-          annotations: none
-          output: report-markdown
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-      - uses: marocchino/sticky-pull-request-comment@v2
-        with:
-          message: ${{ steps.coverage-report.outputs.report }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
