@@ -2,7 +2,7 @@ import { jest } from "@jest/globals"
 import { createContentDigest } from "gatsby-core-utils"
 import { actions as originalActions } from "gatsby/dist/redux/actions"
 import { HacoCmsClient } from "hacocms-js-sdk"
-import { sourceApiNodes } from "../source-api-nodes"
+import { sourceListApiNodes, sourceSingleApiNodes } from "../source-api-nodes"
 
 let currentNodeMap = new Map()
 const createNode = jest.fn((node, ...args) => {
@@ -24,7 +24,7 @@ beforeEach(() => {
 const dummyBaseUrl = `https://dummy.hacocms.com/`
 const dummyAccessToken = `DUMMY_ACCESS_TOKEN`
 
-describe(`sourceApiNodes`, () => {
+describe(`sourceListApiNodes`, () => {
   it(`should generate no nodes if empty list is returned`, async () => {
     jest.spyOn(HacoCmsClient.prototype, `getList`).mockImplementation(() =>
       Promise.resolve({
@@ -35,10 +35,10 @@ describe(`sourceApiNodes`, () => {
 
     const client = new HacoCmsClient(dummyBaseUrl, dummyAccessToken)
 
-    await sourceApiNodes(
+    await sourceListApiNodes(
       { actions, createContentDigest, createNodeId },
       client,
-      { endpoint: `endpoint` }
+      `endpoint`
     )
 
     expect(createNode).toBeCalledTimes(0)
@@ -62,10 +62,10 @@ describe(`sourceApiNodes`, () => {
 
     const client = new HacoCmsClient(dummyBaseUrl, dummyAccessToken)
 
-    await sourceApiNodes(
+    await sourceListApiNodes(
       { actions, createContentDigest, createNodeId },
       client,
-      { endpoint: `endpoint` }
+      `endpoint`
     )
 
     expect(currentNodeMap.size).toBe(1)
@@ -108,10 +108,10 @@ describe(`sourceApiNodes`, () => {
 
     const client = new HacoCmsClient(dummyBaseUrl, dummyAccessToken)
 
-    await sourceApiNodes(
+    await sourceListApiNodes(
       { actions, createContentDigest, createNodeId },
       client,
-      { endpoint: `endpoint` }
+      `endpoint`
     )
 
     expect(createNode).toBeCalledTimes(2)
@@ -146,10 +146,10 @@ describe(`sourceApiNodes`, () => {
 
     const client = new HacoCmsClient(dummyBaseUrl, dummyAccessToken)
 
-    await sourceApiNodes(
+    await sourceListApiNodes(
       { actions, createContentDigest, createNodeId },
       client,
-      { endpoint: `endpoint` }
+      `endpoint`
     )
 
     expect(spyGetList.mock.calls.map(([, , query]) => query?.offset)).toEqual([
@@ -159,5 +159,45 @@ describe(`sourceApiNodes`, () => {
     expect(createNode).toBeCalledTimes(manyContentsJson.length)
     expect(createNodeId).toBeCalledTimes(manyContentsJson.length)
     expect(currentNodeMap.size).toBe(manyContentsJson.length)
+  })
+})
+
+describe(`sourceSingleApiNodes`, () => {
+  it(`should generate an node, which fields includes original ones excluding "id" renamed to "hacocmsId"`, async () => {
+    jest
+      .spyOn(HacoCmsClient.prototype, `getSingle`)
+      .mockImplementationOnce(Content =>
+        Promise.resolve(
+          new Content({
+            id: `abcdef`,
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+            publishedAt: new Date().toISOString(),
+            closedAt: null,
+          })
+        )
+      )
+
+    const client = new HacoCmsClient(dummyBaseUrl, dummyAccessToken)
+
+    await sourceSingleApiNodes(
+      { actions, createContentDigest, createNodeId },
+      client,
+      `endpoint`
+    )
+
+    expect(currentNodeMap.size).toBe(1)
+
+    const node = currentNodeMap.values().next().value
+    expect(Object.keys(node)).toEqual(
+      expect.arrayContaining([
+        `hacocmsId`, // should be renamed from 'id' of the content
+        `createdAt`,
+        `updatedAt`,
+        `publishedAt`,
+        `closedAt`,
+      ])
+    )
+    expect(node.hacocmsId).toBe(`abcdef`) // should be renamed from 'id' of the content
   })
 })
