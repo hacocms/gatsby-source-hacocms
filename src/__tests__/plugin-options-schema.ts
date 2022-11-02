@@ -35,6 +35,20 @@ describe(`pluginOptionsSchema`, () => {
     expect(errors).toHaveLength(0)
   })
 
+  it(`should validate options including projectDraftToken in addition to all required ones`, async () => {
+    const options = {
+      subdomain: `example-example`,
+      accessToken: `DUMMY_ACCESS_TOKEN`,
+      projectDraftToken: `DUMMY_PROJECT_DRAFT_TOKEN`,
+    }
+    const { isValid, errors } = await testPluginOptionsSchema(
+      pluginOptionsSchema,
+      options
+    )
+    expect(isValid).toBe(true)
+    expect(errors).toHaveLength(0)
+  })
+
   it(`should invalidate options including "apis" with an invalid element`, async () => {
     const options = {
       subdomain: `example-example`,

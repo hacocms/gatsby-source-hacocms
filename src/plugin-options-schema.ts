@@ -5,6 +5,7 @@ const validApiShapes = [`list`, `single`] as const
 export type ValidPluginOptions = {
   subdomain: string
   accessToken: string
+  projectDraftToken?: string
   apis?: Array<{
     endpoint: string
     shape: typeof validApiShapes[number]
@@ -17,6 +18,9 @@ export const pluginOptionsSchema = ({ Joi }: PluginOptionsSchemaArgs) =>
     accessToken: Joi.string()
       .required()
       .description(`Access-Token of the project`),
+    projectDraftToken: Joi.string().description(
+      `Project-Draft-Token of the project`
+    ),
     apis: Joi.array()
       .items(
         Joi.object({

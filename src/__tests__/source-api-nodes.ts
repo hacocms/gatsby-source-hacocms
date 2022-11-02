@@ -16,13 +16,14 @@ const actions = {
 const createNodeId = jest.fn(value => value)
 
 beforeEach(() => {
+  jest.clearAllMocks()
+
   currentNodeMap = new Map()
-  createNode.mockClear()
-  createNodeId.mockClear()
 })
 
 const dummyBaseUrl = `https://dummy.hacocms.com/`
 const dummyAccessToken = `DUMMY_ACCESS_TOKEN`
+const dummyProjectDraftToken = `DUMMY_PROJECT_DRAFT_TOKEN`
 
 describe(`sourceListApiNodes`, () => {
   it(`should generate no nodes if empty list is returned`, async () => {
@@ -38,7 +39,8 @@ describe(`sourceListApiNodes`, () => {
     await sourceListApiNodes(
       { actions, createContentDigest, createNodeId },
       client,
-      `endpoint`
+      `endpoint`,
+      false
     )
 
     expect(createNode).toBeCalledTimes(0)
@@ -65,7 +67,8 @@ describe(`sourceListApiNodes`, () => {
     await sourceListApiNodes(
       { actions, createContentDigest, createNodeId },
       client,
-      `endpoint`
+      `endpoint`,
+      false
     )
 
     expect(currentNodeMap.size).toBe(1)
@@ -111,7 +114,8 @@ describe(`sourceListApiNodes`, () => {
     await sourceListApiNodes(
       { actions, createContentDigest, createNodeId },
       client,
-      `endpoint`
+      `endpoint`,
+      false
     )
 
     expect(createNode).toBeCalledTimes(2)
@@ -149,7 +153,8 @@ describe(`sourceListApiNodes`, () => {
     await sourceListApiNodes(
       { actions, createContentDigest, createNodeId },
       client,
-      `endpoint`
+      `endpoint`,
+      false
     )
 
     expect(spyGetList.mock.calls.map(([, , query]) => query?.offset)).toEqual([
@@ -159,6 +164,54 @@ describe(`sourceListApiNodes`, () => {
     expect(createNode).toBeCalledTimes(manyContentsJson.length)
     expect(createNodeId).toBeCalledTimes(manyContentsJson.length)
     expect(currentNodeMap.size).toBe(manyContentsJson.length)
+  })
+
+  it(`should call getListIncludingDraft method and generate node(s) if the last argument is true`, async () => {
+    const mock = jest
+      .spyOn(HacoCmsClient.prototype, `getListIncludingDraft`)
+      .mockImplementationOnce(Content =>
+        Promise.resolve({
+          data: [
+            new Content({
+              id: `abcdef`,
+              createdAt: new Date().toISOString(),
+              updatedAt: new Date().toISOString(),
+              publishedAt: null,
+              closedAt: null,
+            }),
+          ],
+          meta: { total: 1, limit: 100, offset: 0 },
+        })
+      )
+
+    const client = new HacoCmsClient(
+      dummyBaseUrl,
+      dummyAccessToken,
+      dummyProjectDraftToken
+    )
+
+    await sourceListApiNodes(
+      { actions, createContentDigest, createNodeId },
+      client,
+      `endpoint`,
+      true
+    )
+
+    expect(mock).toBeCalledTimes(1)
+
+    expect(currentNodeMap.size).toBe(1)
+
+    const node = currentNodeMap.values().next().value
+    expect(Object.keys(node)).toEqual(
+      expect.arrayContaining([
+        `hacocmsId`, // should be renamed from 'id' of the content
+        `createdAt`,
+        `updatedAt`,
+        `publishedAt`,
+        `closedAt`,
+      ])
+    )
+    expect(node.hacocmsId).toBe(`abcdef`) // should be renamed from 'id' of the content
   })
 })
 
@@ -183,7 +236,8 @@ describe(`sourceSingleApiNodes`, () => {
     await sourceSingleApiNodes(
       { actions, createContentDigest, createNodeId },
       client,
-      `endpoint`
+      `endpoint`,
+      false
     )
 
     expect(currentNodeMap.size).toBe(1)
