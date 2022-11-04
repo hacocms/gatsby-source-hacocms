@@ -16,18 +16,19 @@ class AnyContent extends ApiContent {
 export const sourceListApiNodes = async (
   { actions, createContentDigest, createNodeId }: RequiredSourceNodesArgs,
   client: HacoCmsClient,
-  endpoint: string
+  endpoint: string,
+  includesDraft: boolean
 ) => {
   const { createNode } = actions
+
+  const getList = includesDraft ? client.getListIncludingDraft : client.getList
 
   let total: number | undefined
   let offset = 0
   do {
-    const { data: contents, meta } = await client.getList(
-      AnyContent,
-      `/${endpoint}`,
-      { offset }
-    )
+    const { data: contents, meta } = await getList(AnyContent, `/${endpoint}`, {
+      offset,
+    })
 
     for (const content of contents) {
       createNode({
@@ -58,7 +59,9 @@ export const sourceListApiNodes = async (
 export const sourceSingleApiNodes = async (
   { actions, createContentDigest, createNodeId }: RequiredSourceNodesArgs,
   client: HacoCmsClient,
-  endpoint: string
+  endpoint: string,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  includesDraft: boolean
 ) => {
   const { createNode } = actions
 

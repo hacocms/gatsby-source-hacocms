@@ -16,13 +16,14 @@ const actions = {
 const createNodeId = jest.fn(value => value)
 
 beforeEach(() => {
+  jest.clearAllMocks()
+
   currentNodeMap = new Map()
-  createNode.mockClear()
-  createNodeId.mockClear()
 })
 
 const dummySubdomain = `dummy.hacocms.com`
 const dummyAccessToken = `DUMMY_ACCESS_TOKEN`
+const dummyProjectDraftToken = `DUMMY_PROJECT_DRAFT_TOKEN`
 
 describe(`sourceNodes`, () => {
   it(`should generate nodes`, async () => {
@@ -73,6 +74,62 @@ describe(`sourceNodes`, () => {
         ],
       }
     )
+
+    expect(currentNodeMap.size).toBe(2)
+  })
+
+  it(`should generate all nodes including draft if Project-Draft-Token is given`, async () => {
+    const mockGetListIncludingDraft = jest
+      .spyOn(HacoCmsClient.prototype, `getListIncludingDraft`)
+      .mockImplementationOnce(Content =>
+        Promise.resolve({
+          data: [
+            new Content({
+              id: `abcdef`,
+              createdAt: new Date().toISOString(),
+              updatedAt: new Date().toISOString(),
+              publishedAt: null,
+              closedAt: null,
+            }),
+          ],
+          meta: { total: 1, limit: 100, offset: 0 },
+        })
+      )
+    const mockGetSingle = jest
+      .spyOn(HacoCmsClient.prototype, `getSingle`)
+      .mockImplementationOnce(Content =>
+        Promise.resolve(
+          new Content({
+            id: `ghijkl`,
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+            publishedAt: null,
+            closedAt: null,
+          })
+        )
+      )
+
+    await sourceNodes(
+      { actions, createContentDigest, createNodeId },
+      {
+        subdomain: dummySubdomain,
+        accessToken: dummyAccessToken,
+        projectDraftToken: dummyProjectDraftToken,
+        apis: [
+          {
+            endpoint: `entries`,
+            shape: `list`,
+          },
+          {
+            endpoint: `profile`,
+            shape: `single`,
+          },
+        ],
+      }
+    )
+
+    expect(mockGetListIncludingDraft).toBeCalledTimes(1)
+    expect(mockGetSingle).toBeCalledTimes(1)
 
     expect(currentNodeMap.size).toBe(2)
   })
