@@ -67,6 +67,8 @@ export const sourceSingleApiNodes = async (
 ) => {
   const { createNode } = actions
 
+  // if client is given Project-Draft-Token, i.e. includesDraft is true, getSingle gets draft contents
+  // see also https://github.com/hacocms/hacocms-js-sdk/issues/77
   const content = await client.getSingle(AnyContent, `/${endpoint}`)
 
   createNode({
