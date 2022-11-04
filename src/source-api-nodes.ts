@@ -21,7 +21,9 @@ export const sourceListApiNodes = async (
 ) => {
   const { createNode } = actions
 
-  const getList = includesDraft ? client.getListIncludingDraft : client.getList
+  const getList = (
+    includesDraft ? client.getListIncludingDraft : client.getList
+  ).bind(client)
 
   let total: number | undefined
   let offset = 0
