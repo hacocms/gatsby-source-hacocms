@@ -58,6 +58,14 @@ Gatsby のデータレイヤに取り込む API のエンドポイント `/entri
 
 型：`String`
 
+### `projectDraftToken`
+
+プロジェクトの Project-Draft-Token
+
+指定すると下書きコンテンツも含めて取り込みます。
+
+型：`String`
+
 ### `apis`（必須）
 
 取り込む API のリスト
